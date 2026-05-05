@@ -37,19 +37,6 @@ services:
     networks:
       - feed-ask-ai-network
 
-  ollama-init:
-    image: ollama/ollama:latest
-    container_name: ollama-init
-    depends_on:
-      - ollama
-    entrypoint: [ "/bin/sh", "-c" ]
-    command: |
-      ollama pull tinyllama && \
-      ollama pull nomic-embed-text
-    volumes:
-      - ollama_data:/root/.ollama
-    restart: "no"
-
 
 volumes:
   mysql_data:
