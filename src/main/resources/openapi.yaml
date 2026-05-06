@@ -164,10 +164,6 @@ components:
               type: integer
               description: Number of text chunks that were embedded
               example: 12
-            totalCharacters:
-              type: integer
-              description: Total characters extracted from the PDF
-              example: 2500
             processingTimeMs:
               type: integer
               format: int64
@@ -183,7 +179,6 @@ components:
             - documentName
             - pageCount
             - embeddingsCount
-            - totalCharacters
             - processingTimeMs
             - uploadedAt
       required:
@@ -199,6 +194,7 @@ components:
           type: string
           enum:
             - success
+            - failed
           description: Status of the question answering operation
           example: "success"
         prompt:
@@ -209,86 +205,18 @@ components:
           type: string
           description: AI-generated answer based on document context
           example: "This document is about machine learning fundamentals including supervised and unsupervised learning."
-        sourceVectors:
+        referredFrom:
           type: array
-          description: Top 3 most relevant document chunks used to generate the answer
+          description: List of source document chunks that contributed to the answer
           items:
-            $ref: '#/components/schemas/VectorMatch'
-          example:
-            - sourceText: "Machine learning is a subset of artificial intelligence..."
-              confidenceScore: 0.95
-              pageNumber: 1
-            - sourceText: "Supervised learning requires labeled training data..."
-              confidenceScore: 0.87
-              pageNumber: 2
-            - sourceText: "Unsupervised learning discovers patterns in unlabeled data..."
-              confidenceScore: 0.82
-              pageNumber: 3
-        metrics:
-          type: object
-          description: Performance metrics for the question answering process
-          properties:
-            questionEmbeddingTimeMs:
-              type: integer
-              format: int64
-              description: Time to generate embedding for the question
-              example: 1500
-            vectorSearchTimeMs:
-              type: integer
-              format: int64
-              description: Time to search for similar vectors
-              example: 50
-            answerGenerationTimeMs:
-              type: integer
-              format: int64
-              description: Time to generate the answer using Ollama
-              example: 5000
-            totalProcessingTimeMs:
-              type: integer
-              format: int64
-              description: Total time for the entire operation
-              example: 6550
-          required:
-            - questionEmbeddingTimeMs
-            - vectorSearchTimeMs
-            - answerGenerationTimeMs
-            - totalProcessingTimeMs
+            type: string
+            description: A text chunk from the uploaded documents that was relevant to the question
+            example: "Spring Boot.pdf"
       required:
         - status
         - prompt
         - answer
-        - sourceVectors
-        - metrics
-
-    VectorMatch:
-      type: object
-      description: A single matching vector document chunk with relevance score
-      properties:
-        sourceText:
-          type: string
-          description: The actual text from the document that matched
-          example: "Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience."
-        confidenceScore:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 1
-          description: Cosine similarity score (0-1) indicating relevance
-          example: 0.95
-        pageNumber:
-          type: integer
-          description: Page number in the source PDF document
-          example: 1
-        documentId:
-          type: integer
-          format: int64
-          description: ID of the source document
-          example: 1
-      required:
-        - sourceText
-        - confidenceScore
-        - pageNumber
-        - documentId
+        - contextEmbeddings
 
     ErrorResponse:
       type: object
@@ -321,6 +249,30 @@ components:
         - error
         - message
         - path
+
+    RagChunk:
+      type: object
+      description: A chunk of text from the uploaded documents that was relevant to the question
+      properties:
+        documentId:
+          type: integer
+          format: int64
+          description: ID of the document from which this chunk was extracted
+          example: 1
+        content:
+          type: string
+          description: The actual text chunk that contributed to the answer
+          example: "Spring Boot is a framework for building Java applications with minimal configuration."
+        embedding:
+          type: array
+          items:
+            format: float
+            type: number
+            description: The embedding vector for this text chunk
+      required:
+        - documentId
+        - content
+        - embedding
 
 tags:
   - name: Feed Management
