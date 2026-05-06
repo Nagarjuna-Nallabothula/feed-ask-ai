@@ -19,7 +19,7 @@ A production-grade Spring Boot application that enables intelligent document Q&A
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Client Application                    │
+│                        Client Application                   │
 └────────────────┬───────────────────────┬────────────────────┘
                  │                       │
           ┌──────▼──────┐         ┌──────▼──────┐
@@ -27,30 +27,30 @@ A production-grade Spring Boot application that enables intelligent document Q&A
           │   Endpoint  │         │   Endpoint  │
           └──────┬──────┘         └──────┬──────┘
                  │                       │
-    ┌────────────▼───────────────────────▼──────────────┐
-    │    SPRING BOOT APPLICATION (Java 21)              │
+    ┌────────────▼───────────────────────▼─────────────┐
+    │    SPRING BOOT APPLICATION (Java 21)             │
     │  ┌──────────────────────────────────────────┐    │
-    │  │ FeedService (Document Upload)             │    │
+    │  │ FeedService (Document Upload)            │    │
     │  │ - Semantic Text Chunking                 │    │
     │  │ - Embedding Generation                   │    │
     │  │ - Deduplication                          │    │
     │  └──────────────────────────────────────────┘    │
     │  ┌──────────────────────────────────────────┐    │
-    │  │ AskService (Question Answering)           │    │
+    │  │ AskService (Question Answering)          │    │
     │  │ - Embedding Generation                   │    │
     │  │ - RAG Context Retrieval                  │    │
     │  │ - LLM Answer Generation                  │    │
     │  └──────────────────────────────────────────┘    │
     │  ┌──────────────────────────────────────────┐    │
-    │  │ Support Services                          │    │
+    │  │ Support Services                         │    │
     │  │ - RagContextRetrievalService             │    │
     │  │ - PdfSemanticChunkingService             │    │
     │  └──────────────────────────────────────────┘    │
     └────────────────┬───────────────────┬─────────────┘
                      │                   │
-            ┌────────▼────────┐   ┌──────▼──────────┐
-            │   MySQL 8.0.36  │   │  Ollama Engine  │
-            │   (Port 3307)   │   │  (Port 11435)   │
+            ┌────────▼────────┐   ┌──────▼─────────┐
+            │   MySQL 8.0.36  │   │  Ollama Engine │
+            │   (Port 3307)   │   │  (Port 11435)  │
             │  ┌────────────┐ │   │ ┌────────────┐ │
             │  │  documents │ │   │ │ tinyllama  │ │
             │  │  rag_chunks│ │   │ │ (Chat)     │ │

@@ -207,13 +207,13 @@ jobs:
     steps:
       - name: Build Summary
         run: |
-          echo "╔════════════════════════════════════════╗"
-          echo "║    CI Pipeline Execution Complete     ║"
-          echo "╠════════════════════════════════════════╣"
-          echo "║ Build Status: ${{ needs.build.result }}"
-          echo "║ Security Scan: ${{ needs.security-scan.result }}"
-          echo "║ Code Quality: ${{ needs.code-quality.result }}"
-          echo "╚════════════════════════════════════════╝"
+          echo "╔═════════════════════════════════════════════════════╗"
+          echo "║    CI Pipeline Execution Complete                   ║"
+          echo "╠═════════════════════════════════════════════════════╣"
+          echo "║ Build Status: ${{ needs.build.result }}"            ║
+          echo "║ Security Scan: ${{ needs.security-scan.result }}"   ║
+          echo "║ Code Quality: ${{ needs.code-quality.result }}"     ║
+          echo "╚═════════════════════════════════════════════════════╝"
           echo ""
           if [ "${{ needs.build.result }}" == "success" ]; then
             echo "✅ All checks passed!"
