@@ -56,7 +56,7 @@ jobs:
         run: |
           echo "Waiting for Ollama container to be healthy..."
           for i in {1..60}; do
-            if docker exec feed-ask-ai-ollama curl -f http://localhost:11434/api/tags > /dev/null 2>&1; then
+            if docker exec feed-ask-ai-ollama curl -f http://localhost:11435/api/tags > /dev/null 2>&1; then
               echo "Ollama is ready!"
               exit 0
             fi
