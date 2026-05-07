@@ -1,1 +1,32 @@
-@Nagarjuna-Nallabothula
+# GitHub CODEOWNERS File
+# Code owners are required to approve pull requests before merging
+# This file defines code ownership for different parts of the repository
+
+# Global owners (owners of everything not explicitly claimed)
+* @Nagarjuna-Nallabothula
+
+# Core configuration files
+/build.gradle @Nagarjuna-Nallabothula
+/settings.gradle @Nagarjuna-Nallabothula
+/docker-compose.yml @Nagarjuna-Nallabothula
+/.github @Nagarjuna-Nallabothula
+
+# Source code ownership
+/src/main/java/com/rb/feed_ask_ai/ @Nagarjuna-Nallabothula
+/src/main/resources/ @Nagarjuna-Nallabothula
+
+# Test code ownership
+/src/test/java/com/rb/feed_ask_ai/ @Nagarjuna-Nallabothula
+
+# CI/CD Pipelines - require code owner approval
+/.github/workflows/ @Nagarjuna-Nallabothula
+
+# Documentation
+/README.md @Nagarjuna-Nallabothula
+/CONTRIBUTING.md @Nagarjuna-Nallabothula
+
+# Dependencies
+/gradle/ @Nagarjuna-Nallabothula
+/gradlew @Nagarjuna-Nallabothula
+/gradlew.bat @Nagarjuna-Nallabothula
+/config/ @Nagarjuna-Nallabothula
