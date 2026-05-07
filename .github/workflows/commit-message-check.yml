@@ -16,7 +16,7 @@ jobs:
           for COMMIT in $COMMITS; do
             if [[ ! "$COMMIT" =~ ^${BRANCH}+:\s.+\s-v[0-9]+\.[0-9]+$ ]]; then
               echo "❌ Invalid commit message: $COMMIT"
-              echo "✅ Expected: ${BRANCH} message -vX.Y"
+              echo "✅ Expected: ${BRANCH}: message -vX.Y"
               exit 1
             fi
           done
