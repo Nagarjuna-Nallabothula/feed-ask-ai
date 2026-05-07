@@ -192,12 +192,42 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: gradle
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Run Checkstyle Analysis
+        run: |
+          echo "🔍 Running Checkstyle Code Quality Checks..."
+          ./gradlew checkstyleMain checkstyleTest --info
+        continue-on-error: true
+
+      - name: Generate Checkstyle Report
+        if: always()
+        run: |
+          echo "📊 Checkstyle Report Summary"
+          if [ -f build/reports/checkstyle/main.html ]; then
+            echo "✅ Main code checks completed"
+          fi
+          if [ -f build/reports/checkstyle/test.html ]; then
+            echo "✅ Test code checks completed"
+          fi
+        continue-on-error: true
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        continue-on-error: true
+
+      - name: Upload Checkstyle Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkstyle-reports
+          path: build/reports/checkstyle/
         continue-on-error: true
 
   build-summary:
