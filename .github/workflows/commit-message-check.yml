@@ -17,15 +17,27 @@ jobs:
       - name: Validate commit messages
         run: |
           BRANCH="${{ github.head_ref }}"
+          BASE_BRANCH="${{ github.base_ref }}"
 
-          echo "🔍 Validating commit messages for branch: $BRANCH"
+          echo "🔍 Validating commit messages from $BASE_BRANCH to $BRANCH"
 
-          git log --format="%s" origin/main..HEAD | while read -r COMMIT; do
+          git fetch origin "$BASE_BRANCH" "$BRANCH"
+
+          COMMITS=$(git log --format="%s" origin/$BASE_BRANCH..origin/$BRANCH)
+
+          if [ -z "$COMMITS" ]; then
+            echo "✅ No new commits to validate"
+            exit 0
+          fi
+
+          while IFS= read -r COMMIT; do
+            echo "Checking: $COMMIT"
+
             if [[ ! "$COMMIT" =~ ^${BRANCH}:\ .+\ -v[0-9]+\.[0-9]+$ ]]; then
               echo "❌ Invalid commit message: $COMMIT"
               echo "✅ Expected format: ${BRANCH}: <message> -vX.Y"
               exit 1
             fi
-          done
+          done <<< "$COMMITS"
 
           echo "✅ All commit messages are valid"
