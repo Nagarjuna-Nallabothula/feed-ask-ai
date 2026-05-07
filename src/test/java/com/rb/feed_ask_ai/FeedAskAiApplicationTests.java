@@ -12,5 +12,8 @@ class FeedAskAiApplicationTests {
     void contextLoads() {
         assertTrue(true);
     }
-
+@Test
+    void contextLoads2() {
+        assertTrue(true);
+    }
 }
