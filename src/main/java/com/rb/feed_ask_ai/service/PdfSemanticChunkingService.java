@@ -13,6 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Service for semantic chunking of PDF documents with embedding generation.
+ * Implements production-level semantic chunking that respects document structure
+ * and generates embeddings for each chunk.
+ */
 @Service
 public class PdfSemanticChunkingService {
 
@@ -23,12 +28,21 @@ public class PdfSemanticChunkingService {
 
     private final EmbeddingModel embeddingModel;
 
+    /**
+     * Constructor for PdfSemanticChunkingService.
+     *
+     * @param embeddingModel the embedding model for generating chunk embeddings
+     */
     public PdfSemanticChunkingService(EmbeddingModel embeddingModel) {
         this.embeddingModel = embeddingModel;
     }
 
     /**
-     * ✅ Production‑level semantic chunking + embedding
+     * Ingests a PDF file, performs semantic chunking, and generates embeddings.
+     *
+     * @param file the PDF file to process
+     * @param documentId the ID of the document being processed
+     * @return a list of RAG chunks with generated embeddings
      */
     public List<RagChunk> ingestPdfAndGenerateEmbeddings(
             MultipartFile file, Long documentId) {
@@ -42,7 +56,9 @@ public class PdfSemanticChunkingService {
         for (String chunk : chunks) {
             float[] embed = embeddingModel.embed(chunk);
             List<Float> vector = new ArrayList<>();
-            for (float f : embed) vector.add(f);
+            for (float f : embed) {
+                vector.add(f);
+            }
             result.add(new RagChunk(
                     documentId,
                     chunk,
@@ -53,6 +69,12 @@ public class PdfSemanticChunkingService {
         return result;
     }
 
+    /**
+     * Extracts text from a PDF file.
+     *
+     * @param file the PDF file to extract text from
+     * @return the extracted text
+     */
     private String extractText(MultipartFile file) {
         try (PDDocument document = Loader.loadPDF(file.getInputStream().readAllBytes())) {
             numberOfPages = document.getNumberOfPages();
@@ -68,6 +90,12 @@ public class PdfSemanticChunkingService {
         }
     }
 
+    /**
+     * Splits text into semantic units respecting document structure.
+     *
+     * @param text the text to split semantically
+     * @return a list of semantic units
+     */
     private List<String> splitSemantically(String text) {
 
         List<String> units = new ArrayList<>();
@@ -93,6 +121,12 @@ public class PdfSemanticChunkingService {
         return units;
     }
 
+    /**
+     * Builds token-aware chunks from semantic units with overlap.
+     *
+     * @param units the semantic units to chunk
+     * @return a list of token-aware chunks with overlap
+     */
     private List<String> buildTokenAwareChunks(List<String> units) {
 
         List<String> chunks = new ArrayList<>();
@@ -122,10 +156,23 @@ public class PdfSemanticChunkingService {
         return chunks;
     }
 
+    /**
+     * Estimates the number of tokens in text.
+     *
+     * @param text the text to estimate tokens for
+     * @return the estimated token count
+     */
     private int estimateTokens(String text) {
-        return text.split("\\s+").length; // works well for LLaMA‑like models
+        return text.split("\\s+").length;
     }
 
+    /**
+     * Extracts the last N tokens from text.
+     *
+     * @param text the text to extract from
+     * @param tokens the number of tokens to extract
+     * @return the last N tokens joined by spaces
+     */
     private String lastNTokens(String text, int tokens) {
         String[] words = text.split("\\s+");
         int start = Math.max(words.length - tokens, 0);

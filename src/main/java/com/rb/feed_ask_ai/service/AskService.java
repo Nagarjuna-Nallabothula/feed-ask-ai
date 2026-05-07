@@ -17,6 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service for answering questions based on stored document context.
+ * Retrieves relevant chunks using semantic similarity and generates
+ * answers using the LLM.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -30,6 +35,12 @@ public class AskService {
     @Value("${top.match.max-results:3}")
     private Integer topK;
 
+    /**
+     * Answers a question using stored document context.
+     *
+     * @param prompt the question to answer
+     * @return a response containing the answer and sources
+     */
     public AskResponse ask(String prompt) {
         List<RagChunk> allChunks = ragRepository.findAll().stream()
                 .map(this::convertRagEntityToChunk)

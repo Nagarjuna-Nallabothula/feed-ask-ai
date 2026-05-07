@@ -18,6 +18,11 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for handling PDF document upload and processing.
+ * Manages the complete lifecycle of document ingestion including chunking,
+ * embedding, and database persistence.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,6 +33,12 @@ public class FeedService {
     private final DocRepository docRepository;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Processes a PDF file and stores it with embeddings.
+     *
+     * @param file the PDF file to process
+     * @return a response containing upload details
+     */
     public FeedUploadResponse feedContentFrom(MultipartFile file) {
         OffsetDateTime startedProcessingAt = OffsetDateTime.now();
         DocumentEntity documentEntity = new DocumentEntity();
