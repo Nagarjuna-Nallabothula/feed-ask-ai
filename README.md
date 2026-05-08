@@ -76,57 +76,13 @@ A production-grade Spring Boot application that enables intelligent document Q&A
 # Navigate to project directory
 cd C:\Users\NagarjunaNallabothul\IdeaProjects\feed-ask-ai
 
-# Complete setup: Start Docker → Clean → Generate OpenAPI → Build
-.\gradlew.bat start
+# Make sure you have docker deamon running
+# Run below command to make the required containers available
+docker-compose up -d
+
+# Generate APIs and Model classes
+.\gradlew openApiGenerate
 ```
-
-**This will:**
-1. ✅ Verify Docker installation
-2. ✅ Start MySQL and Ollama containers
-3. ✅ Wait for services to be healthy (15 seconds)
-4. ✅ Clean previous build artifacts
-5. ✅ Generate API code from OpenAPI spec
-6. ✅ Build the entire project
-7. ✅ Display completion status
-
-### Option 2: Step-by-Step Setup
-
-```powershell
-# 1. Start Docker containers
-.\gradlew.bat initEnv
-
-# 2. Verify models are available (models auto-pull on first use)
-docker exec feed-ask-ai-ollama ollama list
-
-# 3. Build the project
-.\gradlew.bat build
-
-# 4. Run the application
-.\gradlew.bat bootRun
-```
-
-### Stopping the Application
-
-```powershell
-# Stop Docker containers and clean build
-.\gradlew.bat stop
-
-# OR just stop containers
-.\gradlew.bat dockerComposeDown
-```
-
-## 📊 Available Gradle Tasks
-
-| Task | Purpose | Example |
-|------|---------|---------|
-| `start` | Full setup & build | `.\gradlew.bat start` |
-| `build` | Build project | `.\gradlew.bat build` |
-| `bootRun` | Run application | `.\gradlew.bat bootRun` |
-| `initEnv` | Start Docker containers | `.\gradlew.bat initEnv` |
-| `dockerComposeUp` | Start Docker services | `.\gradlew.bat dockerComposeUp` |
-| `dockerComposeDown` | Stop Docker services | `.\gradlew.bat dockerComposeDown` |
-| `clean` | Clean build + stop Docker | `.\gradlew.bat clean` |
-| `test` | Run tests | `.\gradlew.bat test` |
 
 ## 🌐 API Endpoints
 
@@ -217,10 +173,14 @@ File: `src/main/resources/application.yaml`
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3307/feed_ask_ai?createDatabaseIfNotExist=true
-    username: admin
-    password: admin123
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql://localhost:3307/feed_ask_ai?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+  username: admin
+  password: admin123
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
 ```
 
 ### Ollama Configuration
@@ -228,12 +188,20 @@ spring:
 ```yaml
 spring:
   ai:
-    ollama:
-      base-url: http://localhost:11435
+  ollama:
+    base-url: http://localhost:11435
+    init:
+      pull-model-strategy: WHEN_MISSING
       chat:
-        model: tinyllama
+        additional-models:
+          - tinyllama
       embedding:
-        model: nomic-embed-text
+        additional-models:
+          - nomic-embed-text
+    chat:
+      model: tinyllama
+    embedding:
+      model: nomic-embed-text
 ```
 
 ### File Upload Limits
@@ -295,7 +263,6 @@ CREATE TABLE rag_chunks (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   document_id BIGINT NOT NULL,
   content LONGTEXT NOT NULL,
-  page_number INT,
   embedding LONGTEXT,
   created_at DATETIME,
   updated_at DATETIME,
